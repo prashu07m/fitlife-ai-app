@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Personalized Recommendations - FitLife{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>Your Personalized Recommendations</h1>
+    <p>Based on your profile, here are customized recommendations for your fitness and diet journey.</p>
+</div>
+
+<div class="dashboard-grid">
+    <!-- BMI Information -->
+    {% if bmi %}
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon progress">
+                <i class="fas fa-calculator"></i>
+            </div>
+            <h3>Your BMI Analysis</h3>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{ bmi }}</div>
+            <div class="stat-label">BMI</div>
+        </div>
+        {% if bmi < 18.5 %}
+            <p style="color: #e74c3c;"><strong>Underweight</strong> - Focus on healthy weight gain.</p>
+        {% elif bmi < 25 %}
+            <p style="color: #27ae60;"><strong>Normal Weight</strong> - Great! Maintain your healthy weight.</p>
+        {% elif bmi < 30 %}
+            <p style="color: #f39c12;"><strong>Overweight</strong> - Consider weight loss for better health.</p>
+        {% else %}
+            <p style="color: #e74c3c;"><strong>Obese</strong> - Focus on sustainable weight loss.</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Workout Recommendations -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon workout">
+                <i class="fas fa-dumbbell"></i>
+            </div>
+            <h3>Workout Plan</h3>
+        </div>
+        {% if workout_plan %}
+            <ul style="list-style: none; padding: 0;">
+                {% for recommendation in workout_plan %}
+                <li style="padding: 0.5rem 0; border-bottom: 1px solid #e1e5e9;">
+                    <i class="fas fa-check" style="color: #27ae60; margin-right: 0.5rem;"></i>
+                    {{ recommendation }}
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Complete your profile to get personalized workout recommendations.</p>
+        {% endif %}
+    </div>
+
+    <!-- Diet Recommendations -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon diet">
+                <i class="fas fa-apple-alt"></i>
+            </div>
+            <h3>Diet Recommendations</h3>
+        </div>
+        {% if diet_plan %}
+            <ul style="list-style: none; padding: 0;">
+                {% for recommendation in diet_plan %}
+                <li style="padding: 0.5rem 0; border-bottom: 1px solid #e1e5e9;">
+                    <i class="fas fa-check" style="color: #27ae60; margin-right: 0.5rem;"></i>
+                    {{ recommendation }}
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Complete your profile to get personalized diet recommendations.</p>
+        {% endif %}
+    </div>
+
+    <!-- Profile Summary -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon goals">
+                <i class="fas fa-user"></i>
+            </div>
+            <h3>Your Profile Summary</h3>
+        </div>
+        <div style="font-size: 0.9rem;">
+            <p><strong>Region:</strong> {{ user.region or 'Not set' }}</p>
+            <p><strong>Budget:</strong> {{ user.budget or 'Not set' }}</p>
+            <p><strong>Gender:</strong> {{ user.gender or 'Not set' }}</p>
+            <p><strong>Height:</strong> {{ user.height or 'Not set' }} cm</p>
+            <p><strong>Weight:</strong> {{ user.weight or 'Not set' }} kg</p>
+            <p><strong>Age:</strong> {{ user.age or 'Not set' }}</p>
+            <p><strong>Activity Level:</strong> {{ user.activity_level or 'Not set' }}</p>
+            <p><strong>Fitness Goal:</strong> {{ user.fitness_goal or 'Not set' }}</p>
+            {% if user.allergies %}
+                <p><strong>Allergies:</strong> {{ user.allergies }}</p>
+            {% endif %}
+        </div>
+        <a href="/profile" class="btn">Update Profile</a>
+    </div>
+</div>
+
+<!-- Action Items -->
+<div class="container">
+    <h2>Next Steps</h2>
+    <div class="action-buttons">
+        <a href="/fitness" class="btn"><i class="fas fa-plus"></i> Start Logging Workouts</a>
+        <a href="/diet" class="btn"><i class="fas fa-plus"></i> Start Logging Meals</a>
+        <a href="/goals" class="btn"><i class="fas fa-bullseye"></i> Set Your Goals</a>
+        <a href="/weight_log" class="btn"><i class="fas fa-weight"></i> Track Your Weight</a>
+    </div>
+</div>
+
+<!-- Tips Section -->
+<div class="container">
+    <h2>General Health Tips</h2>
+    <div class="dashboard-grid">
+        <div class="card">
+            <h4><i class="fas fa-heart"></i> Stay Hydrated</h4>
+            <p>Drink at least 8 glasses of water daily. Dehydration can affect your performance and recovery.</p>
+        </div>
+        <div class="card">
+            <h4><i class="fas fa-bed"></i> Get Enough Sleep</h4>
+            <p>Aim for 7-9 hours of quality sleep per night. Sleep is crucial for muscle recovery and overall health.</p>
+        </div>
+        <div class="card">
+            <h4><i class="fas fa-clock"></i> Be Consistent</h4>
+            <p>Consistency is key to achieving your fitness goals. Small, regular efforts add up over time.</p>
+        </div>
+        <div class="card">
+            <h4><i class="fas fa-chart-line"></i> Track Progress</h4>
+            <p>Regularly log your workouts, meals, and weight to monitor your progress and stay motivated.</p>
+        </div>
+    </div>
+</div>
+{% endblock %} 

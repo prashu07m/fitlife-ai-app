@@ -1,0 +1,18 @@
+<h2>📊 Data Science Insights</h2>
+
+<h3>Health Score: {{ health_score }}/100</h3>
+
+<h3>Predicted Weight (2 weeks): 
+    {% if predicted_weight %}
+        {{ predicted_weight }} kg
+    {% else %}
+        Not enough data
+    {% endif %}
+</h3>
+
+<h3>Insights:</h3>
+<ul>
+    {% for i in insights %}
+        <li>{{ i }}</li>
+    {% endfor %}
+</ul>

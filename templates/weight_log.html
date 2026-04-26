@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Weight Tracking - FitLife{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>Weight Tracking</h1>
+    <p>Monitor your weight progress and stay on track with your goals.</p>
+</div>
+
+<div class="dashboard-grid">
+    <!-- Log Weight Form -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon progress">
+                <i class="fas fa-plus"></i>
+            </div>
+            <h3>Log Weight</h3>
+        </div>
+        <form method="POST" class="form-container">
+            <div class="form-group">
+                <label for="weight">Weight (kg)</label>
+                <input type="number" name="weight" id="weight" step="0.1" min="20" max="300" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="notes">Notes (optional)</label>
+                <textarea name="notes" id="notes" rows="2" placeholder="How are you feeling? Any changes in routine?"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" name="date" id="date" value="{{ today }}" required>
+            </div>
+            
+            <button type="submit" class="btn">Log Weight</button>
+        </form>
+    </div>
+
+    <!-- Weight History -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon diet">
+                <i class="fas fa-history"></i>
+            </div>
+            <h3>Weight History</h3>
+        </div>
+        {% if weight_logs %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Weight (kg)</th>
+                            <th>Change</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i, log in enumerate(weight_logs) %}
+                        <tr>
+                            <td>{{ log[0] }}</td>
+                            <td>{{ log[1] }}</td>
+                            <td>
+                                {% if i < weight_logs|length - 1 %}
+                                    {% set change = log[1] - weight_logs[i + 1][1] %}
+                                    {% if change > 0 %}
+                                        <span style="color: #e74c3c;">+{{ change|round(1) }}</span>
+                                    {% elif change < 0 %}
+                                        <span style="color: #27ae60;">{{ change|round(1) }}</span>
+                                    {% else %}
+                                        <span style="color: #95a5a6;">0.0</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span style="color: #95a5a6;">-</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ log[2] or '-' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>No weight entries yet. Start by logging your first weight!</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Weight Statistics -->
+{% if weight_logs %}
+<div class="container">
+    <h2>Weight Statistics</h2>
+    <div class="stats-grid">
+        <div class="stat-item">
+            <div class="stat-value">{{ weight_logs|length }}</div>
+            <div class="stat-label">Total Entries</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{ weight_logs[0][1] }}</div>
+            <div class="stat-label">Current Weight (kg)</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">
+                {% if weight_logs|length > 1 %}
+                    {% set change = weight_logs[0][1] - weight_logs[-1][1] %}
+                    {% if change > 0 %}
+                        +{{ change|round(1) }}
+                    {% else %}
+                        {{ change|round(1) }}
+                    {% endif %}
+                {% else %}
+                    0.0
+                {% endif %}
+            </div>
+            <div class="stat-label">Total Change (kg)</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">
+                {% set weights = weight_logs|map(attribute=1)|list %}
+                {{ (weights|sum / weights|length)|round(1) }}
+            </div>
+            <div class="stat-label">Average Weight (kg)</div>
+        </div>
+    </div>
+</div>
+
+<!-- Weight Progress Chart -->
+<div class="container">
+    <h2>Weight Progress Chart</h2>
+    <div class="chart-container">
+        <canvas id="weightChart" width="400" height="200"></canvas>
+    </div>
+</div>
+{% endif %}
+
+<script>
+// Set today's date as default
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('date').value = today;
+    
+    {% if weight_logs %}
+    // Weight progress chart
+    const ctx = document.getElementById('weightChart').getContext('2d');
+    const weightData = {{ weight_logs | tojson }};
+    
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: weightData.map(item => item[0]).reverse(),
+            datasets: [{
+                label: 'Weight (kg)',
+                data: weightData.map(item => item[1]).reverse(),
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: '#667eea',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                }
+            }
+        }
+    });
+    {% endif %}
+});
+</script>
+{% endblock %} 

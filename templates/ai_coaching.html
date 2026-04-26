@@ -1,0 +1,378 @@
+{% extends "base.html" %}
+
+{% block title %}AI Fitness Coaching - FitLife{% endblock %}
+
+{% block content %}
+<!-- Success Notification for Profile Update -->
+{% if request.args.get('updated') == 'true' %}
+<div id="success-notification" class="success-notification">
+    <div class="success-content">
+        <i class="fas fa-check-circle"></i>
+        <span>Profile updated successfully! AI recommendations have been refreshed with your new data.</span>
+        <button onclick="hideNotification()" class="close-btn">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+</div>
+{% endif %}
+
+<div class="hero">
+    <h1>🤖 AI Fitness Coaching</h1>
+    <p>Get personalized coaching advice from your AI fitness coach.</p>
+    <div style="margin-top: 1rem;">
+        <button onclick="refreshAIData()" class="btn btn-primary" style="margin-right: 1rem;">
+            <i class="fas fa-sync-alt"></i> Refresh AI Data
+        </button>
+        <a href="/profile" class="btn btn-success" style="margin-right: 1rem;">
+            <i class="fas fa-user-edit"></i> Update Profile
+        </a>
+        <small style="color: rgba(255,255,255,0.8);">
+            <i class="fas fa-clock"></i> Last updated: <span id="current-time"></span>
+        </small>
+    </div>
+</div>
+
+<div class="container">
+    <!-- User Profile Summary -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon workout">
+                <i class="fas fa-user"></i>
+            </div>
+            <h3>Your Profile</h3>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-value">{{ user_data.age }}</div>
+                <div class="stat-label">Age</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ user_data.gender.title() }}</div>
+                <div class="stat-label">Gender</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ user_data.height }} cm</div>
+                <div class="stat-label">Height</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ user_data.weight }} kg</div>
+                <div class="stat-label">Weight</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ user_data.activity_level.replace('_', ' ').title() }}</div>
+                <div class="stat-label">Activity Level</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ user_data.fitness_goal.replace('_', ' ').title() }}</div>
+                <div class="stat-label">Fitness Goal</div>
+            </div>
+        </div>
+    </div>
+
+    {% if ai_available and ai_coaching %}
+    <!-- AI Coaching Advice -->
+    <div class="dashboard-grid">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon diet">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h3>💝 Motivational Message</h3>
+            </div>
+            <div style="padding: 1rem;">
+                <p style="font-size: 1.1rem; line-height: 1.6; color: #333;">
+                    {{ ai_coaching.motivation or "You're doing great! Keep pushing towards your fitness goals." }}
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon progress">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h3>💡 Fitness Tips</h3>
+            </div>
+            <div style="padding: 1rem;">
+                {% if ai_coaching.tips %}
+                    <ul style="list-style: none; padding-left: 0;">
+                        {% for tip in ai_coaching.tips %}
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+                            <i class="fas fa-check" style="color: #27ae60; margin-right: 0.5rem;"></i>{{ tip }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>Focus on consistency and gradual progress in your fitness journey.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon goals">
+                    <i class="fas fa-target"></i>
+                </div>
+                <h3>🎯 Weekly Challenge</h3>
+            </div>
+            <div style="padding: 1rem;">
+                <p style="font-size: 1.1rem; color: #e74c3c; font-weight: 600;">
+                    {{ ai_coaching.challenge or "Complete 5 workouts this week with at least 30 minutes each." }}
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon workout">
+                    <i class="fas fa-star"></i>
+                </div>
+                <h3>⭐ Encouragement</h3>
+            </div>
+            <div style="padding: 1rem;">
+                <p style="font-size: 1.1rem; line-height: 1.6; color: #333;">
+                    {{ ai_coaching.encouragement or "Every step you take brings you closer to your goals. You've got this!" }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- Fallback when AI is not available -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon workout">
+                <i class="fas fa-info-circle"></i>
+            </div>
+            <h3>AI Coaching Unavailable</h3>
+        </div>
+        <div style="padding: 1rem;">
+            <p>AI coaching is currently unavailable. Please try again later or check your internet connection.</p>
+            <p>In the meantime, you can:</p>
+            <ul>
+                <li>Check your <a href="/recommendations">personalized recommendations</a></li>
+                <li>Track your <a href="/fitness">workouts</a> and <a href="/diet">meals</a></li>
+                <li>Set and monitor your <a href="/goals">fitness goals</a></li>
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Recent Activity -->
+    <div class="dashboard-grid">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon workout">
+                    <i class="fas fa-running"></i>
+                </div>
+                <h3>Recent Workouts</h3>
+            </div>
+            {% if recent_workouts %}
+                <div style="padding: 1rem;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #dee2e6;">Date</th>
+                                <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #dee2e6;">Type</th>
+                                <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #dee2e6;">Duration</th>
+                                <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #dee2e6;">Calories</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for workout in recent_workouts %}
+                            <tr>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #dee2e6;">{{ workout[0] }}</td>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #dee2e6;">{{ workout[1] }}</td>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #dee2e6;">{{ workout[2] }} min</td>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #dee2e6;">{{ workout[3] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div style="padding: 1rem;">
+                    <p>No recent workouts. Start your fitness journey today!</p>
+                    <a href="/fitness" class="btn">Log Workout</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon diet">
+                    <i class="fas fa-apple-alt"></i>
+                </div>
+                <h3>Recent Meals</h3>
+            </div>
+            {% if recent_meals %}
+                <div style="padding: 1rem;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #dee2e6;">Date</th>
+                                <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #dee2e6;">Meal</th>
+                                <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #dee2e6;">Food</th>
+                                <th style="padding: 0.5rem; text-align: left; border-bottom: 1px solid #dee2e6;">Calories</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for meal in recent_meals %}
+                            <tr>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #dee2e6;">{{ meal[0] }}</td>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #dee2e6;">{{ meal[1] }}</td>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #dee2e6;">{{ meal[2] }}</td>
+                                <td style="padding: 0.5rem; border-bottom: 1px solid #dee2e6;">{{ meal[3] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div style="padding: 1rem;">
+                    <p>No recent meals logged. Track your nutrition!</p>
+                    <a href="/diet" class="btn">Log Meal</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="container">
+        <h2>🚀 Take Action</h2>
+        <div class="action-buttons">
+            <a href="/fitness" class="btn"><i class="fas fa-plus"></i> Log Workout</a>
+            <a href="/diet" class="btn"><i class="fas fa-plus"></i> Log Meal</a>
+            <a href="/goals" class="btn"><i class="fas fa-bullseye"></i> Set Goals</a>
+            <a href="/recommendations" class="btn"><i class="fas fa-chart-line"></i> View Recommendations</a>
+        </div>
+    </div>
+
+    <!-- AI Status -->
+    <div class="container">
+        <div class="card" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white;">
+            <div style="text-align: center;">
+                <h3><i class="fas fa-robot"></i> Powered by AI</h3>
+                <p>This coaching advice is generated using advanced AI algorithms that analyze your profile, activity, and goals to provide personalized guidance.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function refreshAIData() {
+    const button = event.target.closest('button');
+    const originalText = button.innerHTML;
+    
+    // Show loading state
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+    button.disabled = true;
+    
+    // Reload the page after a short delay to show the loading state
+    setTimeout(() => {
+        location.reload();
+    }, 500);
+}
+
+// Update current time
+function updateCurrentTime() {
+    const now = new Date();
+    const timeString = now.toLocaleString();
+    const timeElements = document.querySelectorAll('#current-time');
+    timeElements.forEach(element => {
+        element.textContent = timeString;
+    });
+}
+
+// Update time immediately and then every second
+updateCurrentTime();
+setInterval(updateCurrentTime, 1000);
+
+// Check if user came from profile update
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('updated') === 'true') {
+        // Show a success message
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            animation: slideIn 0.5s ease-out;
+        `;
+        notification.innerHTML = `
+            <i class="fas fa-check-circle"></i> 
+            Profile updated! AI recommendations refreshed with your latest data.
+        `;
+        document.body.appendChild(notification);
+        
+        // Remove notification after 5 seconds
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.5s ease-in';
+            setTimeout(() => notification.remove(), 500);
+        }, 5000);
+    }
+});
+
+// Add CSS animations and success notification styles
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+    
+    .success-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #27ae60, #2ecc71);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 1000;
+        animation: slideIn 0.5s ease-out;
+        max-width: 400px;
+    }
+    
+    .success-content {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .close-btn {
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        margin-left: auto;
+        padding: 0.25rem;
+    }
+    
+    .close-btn:hover {
+        opacity: 0.8;
+    }
+`;
+document.head.appendChild(style);
+
+function hideNotification() {
+    const notification = document.getElementById('success-notification');
+    if (notification) {
+        notification.style.animation = 'slideOut 0.5s ease-in';
+        setTimeout(() => notification.remove(), 500);
+    }
+}
+</script>
+{% endblock %} 

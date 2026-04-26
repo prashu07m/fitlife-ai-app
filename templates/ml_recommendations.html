@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block title %}AI-Powered Recommendations - FitLife{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>🤖 AI-Powered Personalized Recommendations</h1>
+    <p>Your personalized fitness and diet plan powered by machine learning algorithms.</p>
+</div>
+
+<!-- User Profile Summary -->
+<div class="container">
+    <h2>Your Profile Analysis</h2>
+    <div class="stats-grid">
+        <div class="stat-item">
+            <div class="stat-value">{{ user.age or 'N/A' }}</div>
+            <div class="stat-label">Age</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{ user.height or 'N/A' }} cm</div>
+            <div class="stat-label">Height</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{ user.weight or 'N/A' }} kg</div>
+            <div class="stat-label">Weight</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{ bmi or 'N/A' }}</div>
+            <div class="stat-label">BMI</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{ workout_recommendations.fitness_level.title() }}</div>
+            <div class="stat-label">Fitness Level</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{ diet_recommendations.diet_type.replace('_', ' ').title() }}</div>
+            <div class="stat-label">Diet Type</div>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <!-- Workout Recommendations -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon workout">
+                <i class="fas fa-dumbbell"></i>
+            </div>
+            <h3>🏋️ AI-Generated Workout Plan</h3>
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+            <h4>Your Fitness Profile</h4>
+            <p><strong>Level:</strong> {{ workout_recommendations.fitness_level.title() }}</p>
+            <p><strong>BMI Category:</strong> {{ workout_recommendations.bmi_category.title() }}</p>
+            <p><strong>Frequency:</strong> {{ workout_recommendations.recommendations.frequency }}</p>
+            <p><strong>Duration:</strong> {{ workout_recommendations.recommendations.duration }}</p>
+            <p><strong>Intensity:</strong> {{ workout_recommendations.recommendations.intensity }}</p>
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+            <h4>Recommended Exercises</h4>
+            
+            <div style="margin-bottom: 1rem;">
+                <h5><i class="fas fa-heartbeat"></i> Cardio</h5>
+                <ul style="list-style: none; padding-left: 0;">
+                    {% for exercise in workout_recommendations.recommendations.cardio %}
+                    <li style="padding: 0.25rem 0;"><i class="fas fa-check" style="color: #27ae60; margin-right: 0.5rem;"></i>{{ exercise }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <h5><i class="fas fa-dumbbell"></i> Strength Training</h5>
+                <ul style="list-style: none; padding-left: 0;">
+                    {% for exercise in workout_recommendations.recommendations.strength %}
+                    <li style="padding: 0.25rem 0;"><i class="fas fa-check" style="color: #27ae60; margin-right: 0.5rem;"></i>{{ exercise }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <h5><i class="fas fa-yoga"></i> Flexibility</h5>
+                <ul style="list-style: none; padding-left: 0;">
+                    {% for exercise in workout_recommendations.recommendations.flexibility %}
+                    <li style="padding: 0.25rem 0;"><i class="fas fa-check" style="color: #27ae60; margin-right: 0.5rem;"></i>{{ exercise }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Diet Recommendations -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon diet">
+                <i class="fas fa-apple-alt"></i>
+            </div>
+            <h3>🍎 AI-Generated Diet Plan</h3>
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+            <h4>Nutrition Profile</h4>
+            <p><strong>Daily Calories:</strong> {{ diet_recommendations.daily_calories }}</p>
+            <p><strong>Diet Type:</strong> {{ diet_recommendations.diet_type.replace('_', ' ').title() }}</p>
+            <p><strong>BMI Category:</strong> {{ diet_recommendations.bmi_category.title() }}</p>
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+            <h4>Macro Distribution</h4>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">{{ (diet_recommendations.recommendations.protein_ratio * 100)|round(0) }}%</div>
+                    <div class="stat-label">Protein</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ (diet_recommendations.recommendations.carbs_ratio * 100)|round(0) }}%</div>
+                    <div class="stat-label">Carbs</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ (diet_recommendations.recommendations.fat_ratio * 100)|round(0) }}%</div>
+                    <div class="stat-label">Fat</div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+            <h4>Recommended Foods</h4>
+            <ul style="list-style: none; padding-left: 0;">
+                {% for food in diet_recommendations.recommendations.foods %}
+                <li style="padding: 0.25rem 0;"><i class="fas fa-check" style="color: #27ae60; margin-right: 0.5rem;"></i>{{ food }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+            <h4>Foods to Avoid</h4>
+            <ul style="list-style: none; padding-left: 0;">
+                {% for food in diet_recommendations.recommendations.avoid %}
+                <li style="padding: 0.25rem 0;"><i class="fas fa-times" style="color: #e74c3c; margin-right: 0.5rem;"></i>{{ food }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Weekly Workout Schedule -->
+<div class="container">
+    <h2>📅 Weekly Workout Schedule</h2>
+    <div class="dashboard-grid">
+        {% for day, workout in workout_recommendations.weekly_schedule.items() %}
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon {% if workout.type == 'strength' %}workout{% elif workout.type == 'cardio' %}diet{% elif workout.type == 'flexibility' %}progress{% else %}goals{% endif %}">
+                    <i class="fas fa-{% if workout.type == 'strength' %}dumbbell{% elif workout.type == 'cardio' %}heartbeat{% elif workout.type == 'flexibility' %}yoga{% else %}bed{% endif %}"></i>
+                </div>
+                <h3>{{ day.title() }}</h3>
+            </div>
+            <p><strong>Type:</strong> {{ workout.type.title() }}</p>
+            <p><strong>Focus:</strong> {{ workout.focus }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Daily Meal Plan -->
+<div class="container">
+    <h2>🍽️ Daily Meal Plan</h2>
+    <div class="dashboard-grid">
+        {% for meal, details in diet_recommendations.meal_plan.items() %}
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon diet">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <h3>{{ meal.title() }}</h3>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <h4>Nutrition Goals</h4>
+                <p><strong>Calories:</strong> {{ details.calories }}</p>
+                <p><strong>Protein:</strong> {{ details.protein }}g</p>
+                <p><strong>Carbs:</strong> {{ details.carbs }}g</p>
+                <p><strong>Fat:</strong> {{ details.fat }}g</p>
+            </div>
+            
+            <div>
+                <h4>Meal Suggestions</h4>
+                <ul style="list-style: none; padding-left: 0;">
+                    {% for suggestion in details.suggestions %}
+                    <li style="padding: 0.25rem 0;"><i class="fas fa-lightbulb" style="color: #f39c12; margin-right: 0.5rem;"></i>{{ suggestion }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Regional & Budget Recommendations -->
+<div class="container">
+    <h2>🌍 Personalized for Your Region & Budget</h2>
+    <div class="dashboard-grid">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon progress">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <h3>Regional Foods</h3>
+            </div>
+            <ul style="list-style: none; padding-left: 0;">
+                {% for food in diet_recommendations.recommendations.regional_foods %}
+                <li style="padding: 0.25rem 0;"><i class="fas fa-check" style="color: #27ae60; margin-right: 0.5rem;"></i>{{ food }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon goals">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <h3>Budget-Friendly Options</h3>
+            </div>
+            <div>
+                <h4>Protein Sources</h4>
+                <ul style="list-style: none; padding-left: 0;">
+                    {% for food in diet_recommendations.recommendations.budget_foods.protein %}
+                    <li style="padding: 0.25rem 0;"><i class="fas fa-check" style="color: #27ae60; margin-right: 0.5rem;"></i>{{ food }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Insights -->
+<div class="container">
+    <h2>🧠 AI Insights & Tips</h2>
+    <div class="dashboard-grid">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon workout">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>Workout Insights</h3>
+            </div>
+            <ul style="list-style: none; padding-left: 0;">
+                <li style="padding: 0.5rem 0;"><i class="fas fa-lightbulb" style="color: #f39c12; margin-right: 0.5rem;"></i>Your fitness level is {{ workout_recommendations.fitness_level }}, so start gradually and build up intensity</li>
+                <li style="padding: 0.5rem 0;"><i class="fas fa-lightbulb" style="color: #f39c12; margin-right: 0.5rem;"></i>Focus on {{ workout_recommendations.recommendations.frequency }} for optimal results</li>
+                <li style="padding: 0.5rem 0;"><i class="fas fa-lightbulb" style="color: #f39c12; margin-right: 0.5rem;"></i>Include both cardio and strength training for balanced fitness</li>
+            </ul>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon diet">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Nutrition Insights</h3>
+            </div>
+            <ul style="list-style: none; padding-left: 0;">
+                <li style="padding: 0.5rem 0;"><i class="fas fa-lightbulb" style="color: #f39c12; margin-right: 0.5rem;"></i>Your daily calorie target is {{ diet_recommendations.daily_calories }} calories</li>
+                <li style="padding: 0.5rem 0;"><i class="fas fa-lightbulb" style="color: #f39c12; margin-right: 0.5rem;"></i>Focus on {{ diet_recommendations.diet_type.replace('_', ' ') }} for your goals</li>
+                <li style="padding: 0.5rem 0;"><i class="fas fa-lightbulb" style="color: #f39c12; margin-right: 0.5rem;"></i>Incorporate regional foods for better adherence</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Action Buttons -->
+<div class="container">
+    <h2>🚀 Take Action</h2>
+    <div class="action-buttons">
+        <a href="/fitness" class="btn"><i class="fas fa-plus"></i> Start Your Workout Plan</a>
+        <a href="/diet" class="btn"><i class="fas fa-plus"></i> Log Your Meals</a>
+        <a href="/goals" class="btn"><i class="fas fa-bullseye"></i> Set Goals</a>
+        <a href="/weight_log" class="btn"><i class="fas fa-weight"></i> Track Progress</a>
+    </div>
+</div>
+
+<!-- ML Status -->
+<div class="container">
+    <div class="card" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white;">
+        <div style="text-align: center;">
+            <h3><i class="fas fa-robot"></i> Powered by Machine Learning</h3>
+            <p>These recommendations are generated using advanced ML algorithms that analyze your profile, preferences, and goals to provide the most personalized fitness and diet plan.</p>
+        </div>
+    </div>
+</div>
+{% endblock %} 

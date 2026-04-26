@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+
+<div style="max-width: 500px; margin: auto; padding: 20px;">
+
+```
+<h2 style="text-align:center;">Create Account</h2>
+
+<form method="POST">
+
+    <!-- BASIC INFO -->
+    <input type="text" name="username" placeholder="Username" required class="form-control"><br>
+    <input type="email" name="email" placeholder="Email" class="form-control"><br>
+    <input type="password" name="password" placeholder="Password" required class="form-control"><br>
+
+    <!-- FITNESS INFO -->
+    <input type="number" name="age" placeholder="Age" required class="form-control"><br>
+
+    <select name="gender" required class="form-control">
+        <option value="">Select Gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+    </select><br>
+
+    <input type="number" name="height" placeholder="Height (cm)" required class="form-control"><br>
+    <input type="number" name="weight" placeholder="Weight (kg)" required class="form-control"><br>
+
+    <select name="activity_level" required class="form-control">
+        <option value="sedentary">Sedentary</option>
+        <option value="lightly_active">Lightly Active</option>
+        <option value="moderately_active">Moderately Active</option>
+        <option value="very_active">Very Active</option>
+    </select><br>
+
+    <select name="fitness_goal" required class="form-control">
+        <option value="weight_loss">Weight Loss</option>
+        <option value="muscle_gain">Muscle Gain</option>
+        <option value="maintenance">Maintenance</option>
+    </select><br>
+
+    <!-- PERSONAL PREFERENCES -->
+    <input type="text" name="region" placeholder="Region (asia/europe/etc)" required class="form-control"><br>
+
+    <select name="budget" required class="form-control">
+        <option value="low">Low Budget</option>
+        <option value="medium">Medium Budget</option>
+        <option value="high">High Budget</option>
+    </select><br>
+
+    <input type="text" name="allergies" placeholder="Allergies (optional)" class="form-control"><br>
+
+    <button type="submit" style="width:100%; padding:10px; background:#667eea; color:white; border:none;">
+        Register
+    </button>
+
+</form>
+
+<p style="text-align:center; margin-top:10px;">
+    Already have an account? <a href="/login">Login</a>
+</p>
+```
+
+</div>
+{% endblock %}

@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - FitLife{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>Welcome back, {{ session['username'] }}!</h1>
+    <p>Track your progress and stay motivated on your fitness journey.</p>
+</div>
+
+<!-- Stats Overview -->
+<div class="stats-grid">
+    <div class="stat-item">
+        <div class="stat-value">{{ total_workouts }}</div>
+        <div class="stat-label">Total Workouts</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value">{{ total_calories_burned }}</div>
+        <div class="stat-label">Calories Burned</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value">{{ total_meals }}</div>
+        <div class="stat-label">Meals Logged</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value">{{ total_calories_consumed }}</div>
+        <div class="stat-label">Calories Consumed</div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <!-- User Info Card -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon progress">
+                <i class="fas fa-user"></i>
+            </div>
+            <h3>Your Profile</h3>
+        </div>
+        {% if user_data %}
+            <p><strong>Height:</strong> {{ user_data[0] }} cm</p>
+            <p><strong>Weight:</strong> {{ user_data[1] }} kg</p>
+            <p><strong>Gender:</strong> {{ user_data[2] or 'Not set' }}</p>
+            <p><strong>Age:</strong> {{ user_data[3] or 'Not set' }}</p>
+            {% if bmi %}
+                <p><strong>BMI:</strong> {{ bmi }}</p>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        {% if bmi < 18.5 %}
+                            <div class="progress-fill" style="width: 30%;"></div>
+                        {% elif bmi < 25 %}
+                            <div class="progress-fill" style="width: 60%;"></div>
+                        {% else %}
+                            <div class="progress-fill" style="width: 90%;"></div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        {% else %}
+            <p>Please complete your profile to see your stats.</p>
+        {% endif %}
+        <a href="/profile" class="btn">Update Profile</a>
+    </div>
+
+    <!-- Recent Workouts -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon workout">
+                <i class="fas fa-dumbbell"></i>
+            </div>
+            <h3>Recent Workouts</h3>
+        </div>
+        {% if recent_workouts %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Duration</th>
+                            <th>Calories</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for workout in recent_workouts %}
+                        <tr>
+                            <td>{{ workout[0] }}</td>
+                            <td>{{ workout[1] }}</td>
+                            <td>{{ workout[2] }} min</td>
+                            <td>{{ workout[3] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>No workouts logged yet.</p>
+        {% endif %}
+        <a href="/fitness" class="btn">Log Workout</a>
+    </div>
+
+    <!-- Recent Meals -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon diet">
+                <i class="fas fa-apple-alt"></i>
+            </div>
+            <h3>Recent Meals</h3>
+        </div>
+        {% if recent_meals %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Meal</th>
+                            <th>Food</th>
+                            <th>Calories</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for meal in recent_meals %}
+                        <tr>
+                            <td>{{ meal[0] }}</td>
+                            <td>{{ meal[1] }}</td>
+                            <td>{{ meal[2] }}</td>
+                            <td>{{ meal[3] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>No meals logged yet.</p>
+        {% endif %}
+        <a href="/diet" class="btn">Log Meal</a>
+    </div>
+
+    <!-- Active Goals -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon goals">
+                <i class="fas fa-bullseye"></i>
+            </div>
+            <h3>Active Goals</h3>
+        </div>
+        {% if active_goals %}
+            {% for goal in active_goals %}
+            <div class="goal-item">
+                <h4>{{ goal[0].replace('_', ' ').title() }}</h4>
+                <p>Target: {{ goal[1] }} | Current: {{ goal[2] }}</p>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        {% set progress = (goal[2] / goal[1] * 100) if goal[1] > 0 else 0 %}
+                        {% set progress = progress if progress <= 100 else 100 %}
+                        <div class="progress-fill" style="width: {{ progress }}%;"></div>
+                    </div>
+                </div>
+                <p>Target Date: {{ goal[3] }}</p>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No active goals. Set some goals to stay motivated!</p>
+        {% endif %}
+        <a href="/goals" class="btn">Manage Goals</a>
+    </div>
+</div>
+
+<!-- Weight Progress Chart -->
+{% if weight_data %}
+<div class="container">
+    <h2>Weight Progress</h2>
+    <div class="chart-container">
+        <canvas id="weightChart" width="400" height="200"></canvas>
+    </div>
+</div>
+{% endif %}
+
+<!-- Quick Actions -->
+<div class="container">
+    <h2>Quick Actions</h2>
+    <div class="action-buttons">
+        <a href="/fitness" class="btn"><i class="fas fa-plus"></i> Log Workout</a>
+        <a href="/diet" class="btn"><i class="fas fa-plus"></i> Log Meal</a>
+        <a href="/weight_log" class="btn"><i class="fas fa-weight"></i> Log Weight</a>
+        <a href="/goals" class="btn"><i class="fas fa-bullseye"></i> Set Goal</a>
+        <a href="/recommendations" class="btn"><i class="fas fa-lightbulb"></i> Get Recommendations</a>
+
+        <!-- ✅ DATA SCIENCE BUTTON -->
+        <a href="/data_insights" class="btn">
+            <i class="fas fa-chart-line"></i> Data Insights
+        </a>
+    </div>
+</div>
+
+{% if weight_data %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('weightChart').getContext('2d');
+    const weightData = {{ weight_data | tojson }};
+
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: weightData.map(item => item[0]).reverse(),
+            datasets: [{
+                label: 'Weight (kg)',
+                data: weightData.map(item => item[1]).reverse(),
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        }
+    });
+});
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,625 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - FitLife{% endblock %}
+
+{% block content %}
+<!-- Success Message Display -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ 'success' if category == 'success' else 'danger' if category == 'danger' else 'warning' if category == 'warning' else 'info' }}" 
+                 style="margin: 1rem; padding: 1rem; border-radius: 8px; text-align: center; font-weight: 600;">
+                <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' if category == 'danger' else 'info-circle' if category == 'warning' else 'info-circle' }}"></i>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<div class="hero">
+    <h1 class="text-gradient">Your Profile</h1>
+    <p>Complete your profile to get personalized recommendations and track your progress effectively.</p>
+</div>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon progress">
+                <i class="fas fa-user-edit"></i>
+            </div>
+            <h3>Update Your Profile</h3>
+        </div>
+        
+        <form method="POST" style="padding: 2rem;">
+            <h4 style="margin-bottom: 1.5rem; color: var(--primary); font-weight: 600;">
+                <i class="fas fa-user" style="margin-right: 0.5rem;"></i>Personal Information
+            </h4>
+            
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                <select name="gender" id="gender" class="form-control">
+                    <option value="">Select gender</option>
+                    <option value="male" {% if user and user[3] == 'male' %}selected{% endif %}>Male</option>
+                    <option value="female" {% if user and user[3] == 'female' %}selected{% endif %}>Female</option>
+                    <option value="other" {% if user and user[3] == 'other' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input type="number" name="age" id="age" min="13" max="120" value="{{ user[6] if user else '' }}" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="height">Height (cm)</label>
+                <input type="number" name="height" id="height" min="100" max="250" step="0.1" value="{{ user[4] if user else '' }}" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label for="weight">Weight (kg)</label>
+                <input type="number" name="weight" id="weight" min="30" max="300" step="0.1" value="{{ user[5] if user else '' }}" class="form-control">
+            </div>
+            
+            <h4 style="margin: 2rem 0 1.5rem 0; color: var(--primary); font-weight: 600;">
+                <i class="fas fa-dumbbell" style="margin-right: 0.5rem;"></i>Activity & Goals
+            </h4>
+            
+            <div class="form-group">
+                <label for="activity_level">Activity Level</label>
+                <select name="activity_level" id="activity_level" class="form-control">
+                    <option value="">Select activity level</option>
+                    <option value="sedentary" {% if user and user[7] == 'sedentary' %}selected{% endif %}>Sedentary (little or no exercise)</option>
+                    <option value="lightly_active" {% if user and user[7] == 'lightly_active' %}selected{% endif %}>Lightly Active (light exercise 1-3 days/week)</option>
+                    <option value="moderately_active" {% if user and user[7] == 'moderately_active' %}selected{% endif %}>Moderately Active (moderate exercise 3-5 days/week)</option>
+                    <option value="very_active" {% if user and user[7] == 'very_active' %}selected{% endif %}>Very Active (hard exercise 6-7 days/week)</option>
+                    <option value="extremely_active" {% if user and user[7] == 'extremely_active' %}selected{% endif %}>Extremely Active (very hard exercise, physical job)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="fitness_goal">Fitness Goal</label>
+                <select name="fitness_goal" id="fitness_goal" class="form-control">
+                    <option value="">Select fitness goal</option>
+                    <option value="weight_loss" {% if user and user[8] == 'weight_loss' %}selected{% endif %}>Weight Loss</option>
+                    <option value="muscle_gain" {% if user and user[8] == 'muscle_gain' %}selected{% endif %}>Muscle Gain</option>
+                    <option value="endurance" {% if user and user[8] == 'endurance' %}selected{% endif %}>Endurance</option>
+                    <option value="strength" {% if user and user[8] == 'strength' %}selected{% endif %}>Strength</option>
+                    <option value="general_fitness" {% if user and user[8] == 'general_fitness' %}selected{% endif %}>General Fitness</option>
+                    <option value="maintenance" {% if user and user[8] == 'maintenance' %}selected{% endif %}>Maintenance</option>
+                </select>
+            </div>
+            
+            <h4 style="margin: 2rem 0 1.5rem 0; color: var(--primary); font-weight: 600;">
+                <i class="fas fa-cog" style="margin-right: 0.5rem;"></i>Preferences
+            </h4>
+            
+            <div class="form-group">
+                <label for="region">Region</label>
+                <select name="region" id="region" class="form-control">
+                    <option value="">Select region</option>
+                    <option value="india" {% if user and user[0] == 'india' %}selected{% endif %}>India</option>
+                    <option value="north_america" {% if user and user[0] == 'north_america' %}selected{% endif %}>North America</option>
+                    <option value="europe" {% if user and user[0] == 'europe' %}selected{% endif %}>Europe</option>
+                    <option value="asia" {% if user and user[0] == 'asia' %}selected{% endif %}>Asia</option>
+                    <option value="africa" {% if user and user[0] == 'africa' %}selected{% endif %}>Africa</option>
+                    <option value="south_america" {% if user and user[0] == 'south_america' %}selected{% endif %}>South America</option>
+                    <option value="australia" {% if user and user[0] == 'australia' %}selected{% endif %}>Australia/Oceania</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="budget">Budget Level</label>
+                <select name="budget" id="budget" class="form-control">
+                    <option value="">Select budget level</option>
+                    <option value="low" {% if user and user[1] == 'low' %}selected{% endif %}>Low Budget</option>
+                    <option value="medium" {% if user and user[1] == 'medium' %}selected{% endif %}>Medium Budget</option>
+                    <option value="high" {% if user and user[1] == 'high' %}selected{% endif %}>High Budget</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="allergies">Food Allergies/Intolerances</label>
+                <textarea name="allergies" id="allergies" rows="3" placeholder="e.g., nuts, dairy, gluten, shellfish (separate with commas)" class="form-control">{{ user[2] if user else '' }}</textarea>
+            </div>
+            
+            <!-- Hidden redirect field -->
+            <input type="hidden" name="redirect_to" id="redirect_to" value="dashboard">
+            
+            <div style="text-align: center; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">
+                    <i class="fas fa-save"></i> Update Profile
+                </button>
+            </div>
+            
+            <!-- AI Redirect Buttons -->
+            <div style="margin-top: 2rem; text-align: center;">
+                <h4 style="color: var(--primary); margin-bottom: 1rem;">
+                    <i class="fas fa-robot"></i> Update & Go To AI Features
+                </h4>
+                <div class="ai-redirect-buttons">
+                    <button type="button" class="btn btn-ai-coaching" onclick="updateProfileAndRedirect('ai_coaching')">
+                        <i class="fas fa-comments"></i> AI Coaching
+                    </button>
+                    <button type="button" class="btn btn-ai-recipes" onclick="updateProfileAndRedirect('ai_recipes')">
+                        <i class="fas fa-utensils"></i> AI Recipes
+                    </button>
+                    <button type="button" class="btn btn-ai-workout" onclick="updateProfileAndRedirect('ai_workout_plan')">
+                        <i class="fas fa-dumbbell"></i> AI Workout Plan
+                    </button>
+                    <button type="button" class="btn btn-ai-analysis" onclick="updateProfileAndRedirect('ai_progress_analysis')">
+                        <i class="fas fa-chart-line"></i> AI Progress Analysis
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Debug Buttons -->
+            <div style="margin-top: 2rem; text-align: center; border-top: 1px solid #eee; padding-top: 1rem;">
+                <h4 style="color: #666; margin-bottom: 1rem;">
+                    <i class="fas fa-bug"></i> Debug Tools
+                </h4>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-secondary" onclick="checkProfileStatus()">
+                        <i class="fas fa-search"></i> Check Profile Status
+                    </button>
+                    <button type="button" class="btn btn-warning" onclick="forceUpdateProfile()">
+                        <i class="fas fa-magic"></i> Force Update (Test)
+                    </button>
+                    <a href="/debug_user_data" target="_blank" class="btn btn-info">
+                        <i class="fas fa-database"></i> View Raw Data
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Profile Summary -->
+{% if user %}
+<div class="container">
+    <h2 style="text-align: center; margin: 3rem 0 2rem 0; color: white; font-size: 2rem;">
+        <i class="fas fa-chart-pie" style="margin-right: 0.5rem;"></i>Profile Summary
+    </h2>
+    
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon diet">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <h3>Your Stats</h3>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-value">{{ user[6] or 'Not set' }}</div>
+                <div class="stat-label">Age</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ user[4] or 'Not set' }}</div>
+                <div class="stat-label">Height (cm)</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ user[5] or 'Not set' }}</div>
+                <div class="stat-label">Weight (kg)</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">
+                    {% if user[4] and user[5] %}
+                        {% set bmi = (user[5] / ((user[4]/100) ** 2))|round(1) %}
+                        {{ bmi }}
+                    {% else %}
+                        Not set
+                    {% endif %}
+                </div>
+                <div class="stat-label">BMI</div>
+            </div>
+        </div>
+    </div>
+    
+    {% if user[4] and user[5] %}
+    <div class="card" style="margin-top: 2rem;">
+        <div class="card-header">
+            <div class="card-icon goals">
+                <i class="fas fa-heartbeat"></i>
+            </div>
+            <h3>BMI Analysis</h3>
+        </div>
+        <div style="padding: 1.5rem;">
+            {% set bmi = (user[5] / ((user[4]/100) ** 2))|round(1) %}
+            {% if bmi < 18.5 %}
+                <div style="background: linear-gradient(135deg, #ff6b6b, #ee5a24); color: white; padding: 1rem; border-radius: var(--radius-md); text-align: center;">
+                    <h4 style="margin: 0 0 0.5rem 0;"><i class="fas fa-exclamation-triangle"></i> Underweight</h4>
+                    <p style="margin: 0;">Consider gaining some weight for better health. Focus on nutrient-dense foods.</p>
+                </div>
+            {% elif bmi < 25 %}
+                <div style="background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; padding: 1rem; border-radius: var(--radius-md); text-align: center;">
+                    <h4 style="margin: 0 0 0.5rem 0;"><i class="fas fa-check-circle"></i> Normal Weight</h4>
+                    <p style="margin: 0;">Excellent! Maintain this healthy weight with balanced nutrition and regular exercise.</p>
+                </div>
+            {% elif bmi < 30 %}
+                <div style="background: linear-gradient(135deg, #f39c12, #e67e22); color: white; padding: 1rem; border-radius: var(--radius-md); text-align: center;">
+                    <h4 style="margin: 0 0 0.5rem 0;"><i class="fas fa-info-circle"></i> Overweight</h4>
+                    <p style="margin: 0;">Consider lifestyle changes for better health. Focus on balanced diet and regular exercise.</p>
+                </div>
+            {% else %}
+                <div style="background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; padding: 1rem; border-radius: var(--radius-md); text-align: center;">
+                    <h4 style="margin: 0 0 0.5rem 0;"><i class="fas fa-exclamation-circle"></i> Obese</h4>
+                    <p style="margin: 0;">Consider consulting a healthcare professional for personalized guidance.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<!-- Action Buttons -->
+<div class="container">
+    <div class="action-buttons">
+        <a href="/dashboard" class="btn btn-primary">
+            <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+        </a>
+        <a href="/recommendations" class="btn btn-success">
+            <i class="fas fa-chart-line"></i> View Recommendations
+        </a>
+        <a href="/ai_coaching" class="btn btn-warning">
+            <i class="fas fa-robot"></i> AI Coaching
+        </a>
+    </div>
+</div>
+
+<style>
+/* AI Redirect Buttons */
+.ai-redirect-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.btn-ai-coaching {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-ai-recipes {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-ai-workout {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-ai-analysis {
+    background: linear-gradient(135deg, #43e97b, #38f9d7);
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-ai-coaching:hover,
+.btn-ai-recipes:hover,
+.btn-ai-workout:hover,
+.btn-ai-analysis:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-ai-coaching:active,
+.btn-ai-recipes:active,
+.btn-ai-workout:active,
+.btn-ai-analysis:active {
+    transform: translateY(-1px);
+}
+
+/* Debug button styles */
+.btn-secondary {
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-info {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-secondary:hover,
+.btn-warning:hover,
+.btn-info:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    color: white;
+    text-decoration: none;
+}
+
+/* Loading state for AI buttons */
+.btn-ai-coaching.loading,
+.btn-ai-recipes.loading,
+.btn-ai-workout.loading,
+.btn-ai-analysis.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.btn-ai-coaching.loading::after,
+.btn-ai-recipes.loading::after,
+.btn-ai-workout.loading::after,
+.btn-ai-analysis.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 0.5rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Alert Messages */
+.alert {
+    margin: 1rem;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+    animation: slideDown 0.5s ease-out;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    color: white;
+    border: none;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    border: none;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+    border: none;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    border: none;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .ai-redirect-buttons {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+// Calculate BMI in real-time
+document.addEventListener('DOMContentLoaded', function() {
+    const heightInput = document.getElementById('height');
+    const weightInput = document.getElementById('weight');
+    
+    function calculateBMI() {
+        const height = parseFloat(heightInput.value);
+        const weight = parseFloat(weightInput.value);
+        
+        if (height && weight) {
+            const bmi = (weight / Math.pow(height / 100, 2)).toFixed(1);
+            console.log('BMI:', bmi);
+        }
+    }
+    
+    heightInput.addEventListener('input', calculateBMI);
+    weightInput.addEventListener('input', calculateBMI);
+    
+    // Add form validation
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        const requiredFields = ['gender', 'age', 'height', 'weight', 'activity_level', 'fitness_goal', 'region', 'budget'];
+        let isValid = true;
+        
+        requiredFields.forEach(fieldName => {
+            const field = document.getElementById(fieldName);
+            if (!field.value.trim()) {
+                field.style.borderColor = '#e74c3c';
+                isValid = false;
+            } else {
+                field.style.borderColor = '';
+            }
+        });
+        
+        if (!isValid) {
+            e.preventDefault();
+            alert('Please fill in all required fields.');
+        }
+    });
+});
+
+// Function to update profile and redirect to AI section
+function updateProfileAndRedirect(aiSection) {
+    // Validate form first
+    const requiredFields = ['gender', 'age', 'height', 'weight', 'activity_level', 'fitness_goal', 'region', 'budget'];
+    let isValid = true;
+    
+    requiredFields.forEach(fieldName => {
+        const field = document.getElementById(fieldName);
+        if (!field.value.trim()) {
+            field.style.borderColor = '#e74c3c';
+            isValid = false;
+        } else {
+            field.style.borderColor = '';
+        }
+    });
+    
+    if (!isValid) {
+        alert('Please fill in all required fields before updating your profile.');
+        return;
+    }
+    
+    // Set the redirect target
+    document.getElementById('redirect_to').value = aiSection;
+    
+    // Add loading state to the clicked button
+    const clickedButton = event.target.closest('button');
+    if (clickedButton) {
+        clickedButton.classList.add('loading');
+        clickedButton.style.pointerEvents = 'none';
+        
+        // Change button text to show loading
+        const originalText = clickedButton.innerHTML;
+        clickedButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating Profile...';
+        
+        // Submit the form
+        document.querySelector('form').submit();
+    }
+}
+
+// Add visual feedback for AI buttons
+document.addEventListener('DOMContentLoaded', function() {
+    const aiButtons = document.querySelectorAll('.btn-ai-coaching, .btn-ai-recipes, .btn-ai-workout, .btn-ai-analysis');
+    
+    aiButtons.forEach(button => {
+        button.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-3px) scale(1.02)';
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+});
+
+// Debug functions
+function checkProfileStatus() {
+    fetch('/test_profile_update')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Profile status:', data);
+            alert(`Profile Status:\nComplete: ${data.is_complete}\nMissing: ${data.missing_fields.join(', ') || 'None'}\nCheck console for details.`);
+        })
+        .catch(error => {
+            console.error('Error checking profile status:', error);
+            alert('Error checking profile status. Check console for details.');
+        });
+}
+
+function forceUpdateProfile() {
+    if (confirm('This will force update your profile with test data. Continue?')) {
+        fetch('/force_update_profile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Force update result:', data);
+            if (data.success) {
+                alert('Profile force updated successfully! Check console for details.');
+                location.reload();
+            } else {
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error force updating profile:', error);
+            alert('Error force updating profile. Check console for details.');
+        });
+    }
+}
+</script>
+{% endblock %} 

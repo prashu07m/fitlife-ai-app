@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}FitLife - Your Personal Fitness Companion{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero">
+    <h1 class="text-gradient">Transform Your Fitness Journey</h1>
+    <p>Discover the power of AI-driven personalized fitness and nutrition plans. Track, analyze, and achieve your health goals with cutting-edge technology.</p>
+    <div class="action-buttons">
+        <a href="/register" class="btn btn-primary">
+            <i class="fas fa-rocket"></i> Get Started Free
+        </a>
+        <a href="/login" class="btn btn-success">
+            <i class="fas fa-sign-in-alt"></i> Sign In
+        </a>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container">
+    <h2 style="text-align: center; margin-bottom: 3rem; font-size: 2.5rem; font-weight: 700; color: white;">
+        <i class="fas fa-star" style="margin-right: 0.5rem;"></i>Why Choose FitLife?
+    </h2>
+    
+    <div class="dashboard-grid">
+        <div class="feature-card floating">
+            <i class="fas fa-robot"></i>
+            <h3>AI-Powered Coaching</h3>
+            <p>Get personalized fitness coaching, workout plans, and nutrition advice powered by advanced artificial intelligence. Your virtual fitness trainer available 24/7.</p>
+        </div>
+        
+        <div class="feature-card floating" style="animation-delay: 0.2s;">
+            <i class="fas fa-chart-line"></i>
+            <h3>Smart Progress Tracking</h3>
+            <p>Track your workouts, meals, and progress with intelligent analytics. Visualize your fitness journey with beautiful charts and insights.</p>
+        </div>
+        
+        <div class="feature-card floating" style="animation-delay: 0.4s;">
+            <i class="fas fa-utensils"></i>
+            <h3>Personalized Nutrition</h3>
+            <p>Receive custom recipe suggestions based on your preferences, allergies, budget, and fitness goals. Eat healthy without compromising on taste.</p>
+        </div>
+        
+        <div class="feature-card floating" style="animation-delay: 0.6s;">
+            <i class="fas fa-bullseye"></i>
+            <h3>Goal Achievement</h3>
+            <p>Set and track personalized fitness goals. Celebrate milestones and stay motivated with our achievement system and progress rewards.</p>
+        </div>
+        
+        <div class="feature-card floating" style="animation-delay: 0.8s;">
+            <i class="fas fa-mobile-alt"></i>
+            <h3>Mobile-First Design</h3>
+            <p>Access your fitness dashboard anywhere, anytime. Our responsive design works perfectly on all devices - desktop, tablet, and mobile.</p>
+        </div>
+        
+        <div class="feature-card floating" style="animation-delay: 1s;">
+            <i class="fas fa-shield-alt"></i>
+            <h3>Privacy & Security</h3>
+            <p>Your data is secure with us. We use industry-standard encryption and never share your personal information with third parties.</p>
+        </div>
+    </div>
+</div>
+
+<!-- AI Features Showcase -->
+<div class="container">
+    <h2 style="text-align: center; margin: 4rem 0 3rem 0; font-size: 2.5rem; font-weight: 700; color: white;">
+        <i class="fas fa-magic" style="margin-right: 0.5rem;"></i>AI-Powered Features
+    </h2>
+    
+    <div class="dashboard-grid">
+        <div class="card hover-lift">
+            <div class="card-header">
+                <div class="card-icon workout">
+                    <i class="fas fa-dumbbell"></i>
+                </div>
+                <h3>AI Workout Plans</h3>
+            </div>
+            <div style="padding: 1.5rem;">
+                <p>Get personalized 7-day workout plans tailored to your fitness level, goals, and available equipment. Each plan includes detailed exercises, sets, reps, and safety tips.</p>
+                <div style="margin-top: 1rem;">
+                    <span style="background: var(--primary-gradient); color: white; padding: 0.25rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.9rem;">
+                        <i class="fas fa-check"></i> Personalized
+                    </span>
+                    <span style="background: var(--success-gradient); color: white; padding: 0.25rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.9rem; margin-left: 0.5rem;">
+                        <i class="fas fa-clock"></i> 7-Day Plans
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card hover-lift">
+            <div class="card-header">
+                <div class="card-icon diet">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <h3>AI Recipe Suggestions</h3>
+            </div>
+            <div style="padding: 1.5rem;">
+                <p>Discover healthy recipes that match your dietary preferences, allergies, budget, and fitness goals. Each recipe includes nutritional information and cooking instructions.</p>
+                <div style="margin-top: 1rem;">
+                    <span style="background: var(--success-gradient); color: white; padding: 0.25rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.9rem;">
+                        <i class="fas fa-heart"></i> Healthy
+                    </span>
+                    <span style="background: var(--warning-gradient); color: white; padding: 0.25rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.9rem; margin-left: 0.5rem;">
+                        <i class="fas fa-coins"></i> Budget-Friendly
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card hover-lift">
+            <div class="card-header">
+                <div class="card-icon progress">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h3>AI Progress Analysis</h3>
+            </div>
+            <div style="padding: 1.5rem;">
+                <p>Get intelligent insights about your fitness journey. AI analyzes your progress data to provide personalized recommendations and celebrate your achievements.</p>
+                <div style="margin-top: 1rem;">
+                    <span style="background: var(--secondary-gradient); color: white; padding: 0.25rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.9rem;">
+                        <i class="fas fa-brain"></i> Smart Insights
+                    </span>
+                    <span style="background: var(--danger-gradient); color: white; padding: 0.25rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.9rem; margin-left: 0.5rem;">
+                        <i class="fas fa-trophy"></i> Achievements
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card hover-lift">
+            <div class="card-header">
+                <div class="card-icon goals">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3>AI Fitness Coaching</h3>
+            </div>
+            <div style="padding: 1.5rem;">
+                <p>Receive personalized motivation, tips, and challenges from your AI fitness coach. Stay motivated and on track with your fitness goals.</p>
+                <div style="margin-top: 1rem;">
+                    <span style="background: var(--warning-gradient); color: white; padding: 0.25rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.9rem;">
+                        <i class="fas fa-fire"></i> Motivational
+                    </span>
+                    <span style="background: var(--primary-gradient); color: white; padding: 0.25rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.9rem; margin-left: 0.5rem;">
+                        <i class="fas fa-calendar"></i> Weekly Challenges
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Section -->
+<div class="container">
+    <div class="card" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);">
+        <div class="card-header">
+            <div class="card-icon progress">
+                <i class="fas fa-chart-pie"></i>
+            </div>
+            <h3>FitLife by the Numbers</h3>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-value">10K+</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">50K+</div>
+                <div class="stat-label">Workouts Logged</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">100K+</div>
+                <div class="stat-label">Meals Tracked</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">95%</div>
+                <div class="stat-label">User Satisfaction</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="container">
+    <div class="hero" style="background: var(--primary-gradient); color: white; margin-top: 4rem;">
+        <h1 style="color: white; font-size: 2.5rem;">Ready to Transform Your Fitness?</h1>
+        <p style="color: rgba(255, 255, 255, 0.9); font-size: 1.2rem;">Join thousands of users who have already achieved their fitness goals with FitLife's AI-powered platform.</p>
+        <div class="action-buttons">
+            <a href="/register" class="btn" style="background: white; color: var(--primary); font-weight: 700; padding: 1rem 2rem; font-size: 1.1rem;">
+                <i class="fas fa-rocket"></i> Start Your Journey
+            </a>
+            <a href="/login" class="btn" style="background: rgba(255, 255, 255, 0.2); color: white; border: 2px solid white; padding: 1rem 2rem; font-size: 1.1rem;">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Footer Features -->
+<div class="container">
+    <div style="text-align: center; margin: 4rem 0 2rem 0; color: white;">
+        <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">
+            <i class="fas fa-shield-alt" style="margin-right: 0.5rem;"></i>100% Free & Secure
+        </h3>
+        <p style="color: rgba(255, 255, 255, 0.8);">
+            No hidden fees, no premium tiers. All features are completely free to use. Your data is protected with enterprise-grade security.
+        </p>
+    </div>
+</div>
+{% endblock %} 

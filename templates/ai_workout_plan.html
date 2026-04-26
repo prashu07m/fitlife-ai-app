@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+
+{% block title %}AI Workout Plan - FitLife{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>💪 AI Workout Plan</h1>
+    <p>Get a personalized 7-day workout plan designed specifically for your fitness level and goals.</p>
+    <div style="margin-top: 1rem;">
+        <button onclick="refreshAIData()" class="btn btn-primary" style="margin-right: 1rem;">
+            <i class="fas fa-sync-alt"></i> Refresh AI Data
+        </button>
+        <a href="/profile" class="btn btn-success" style="margin-right: 1rem;">
+            <i class="fas fa-user-edit"></i> Update Profile
+        </a>
+        <small style="color: rgba(255,255,255,0.8);">
+            <i class="fas fa-clock"></i> Last updated: <span id="current-time"></span>
+        </small>
+    </div>
+</div>
+
+<div class="container">
+    <!-- User Profile -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon workout">
+                <i class="fas fa-user"></i>
+            </div>
+            <h3>Your Fitness Profile</h3>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-value">{{ user_data.age }}</div>
+                <div class="stat-label">Age</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ user_data.gender.title() }}</div>
+                <div class="stat-label">Gender</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ user_data.activity_level.replace('_', ' ').title() }}</div>
+                <div class="stat-label">Activity Level</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ user_data.fitness_goal.replace('_', ' ').title() }}</div>
+                <div class="stat-label">Fitness Goal</div>
+            </div>
+        </div>
+    </div>
+
+    {% if ai_available and ai_workout and ai_workout.workouts %}
+    <!-- AI Workout Plan -->
+    <div class="dashboard-grid">
+        {% for workout in ai_workout.workouts %}
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon {% if workout.focus and 'cardio' in workout.focus.lower() %}diet{% elif workout.focus and 'strength' in workout.focus.lower() %}workout{% elif workout.focus and 'rest' in workout.focus.lower() %}goals{% else %}progress{% endif %}">
+                    <i class="fas fa-{% if workout.focus and 'cardio' in workout.focus.lower() %}heartbeat{% elif workout.focus and 'strength' in workout.focus.lower() %}dumbbell{% elif workout.focus and 'rest' in workout.focus.lower() %}bed{% else %}running{% endif %}"></i>
+                </div>
+                <h3>{{ workout.day or 'Day ' + loop.index|string }}</h3>
+            </div>
+            
+            <div style="padding: 1rem;">
+                {% if workout.focus %}
+                <div style="margin-bottom: 1rem;">
+                    <h4>Focus: {{ workout.focus }}</h4>
+                </div>
+                {% endif %}
+                
+                {% if workout.duration %}
+                <div style="margin-bottom: 1rem;">
+                    <p><strong>Duration:</strong> {{ workout.duration }}</p>
+                </div>
+                {% endif %}
+                
+                {% if workout.intensity %}
+                <div style="margin-bottom: 1rem;">
+                    <p><strong>Intensity:</strong> {{ workout.intensity }}</p>
+                </div>
+                {% endif %}
+                
+                {% if workout.exercises %}
+                <div style="margin-bottom: 1rem;">
+                    <h4>Exercises</h4>
+                    <ul style="list-style: none; padding-left: 0;">
+                        {% for exercise in workout.exercises %}
+                        <li style="padding: 0.25rem 0;">
+                            <i class="fas fa-check" style="color: #27ae60; margin-right: 0.5rem;"></i>{{ exercise }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                
+                {% if workout.instructions %}
+                <div style="margin-bottom: 1rem;">
+                    <h4>Instructions</h4>
+                    <ol style="padding-left: 1.5rem;">
+                        {% for instruction in workout.instructions %}
+                        <li style="padding: 0.25rem 0;">{{ instruction }}</li>
+                        {% endfor %}
+                    </ol>
+                </div>
+                {% endif %}
+                
+                {% if workout.safety_tips %}
+                <div>
+                    <h4>Safety Tips</h4>
+                    <ul style="list-style: none; padding-left: 0;">
+                        {% for tip in workout.safety_tips %}
+                        <li style="padding: 0.25rem 0;">
+                            <i class="fas fa-shield-alt" style="color: #f39c12; margin-right: 0.5rem;"></i>{{ tip }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <!-- Fallback when AI is not available -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon workout">
+                <i class="fas fa-info-circle"></i>
+            </div>
+            <h3>Workout Plan Unavailable</h3>
+        </div>
+        <div style="padding: 1rem;">
+            <p>AI workout plan is currently unavailable. Please try again later or check your internet connection.</p>
+            <p>In the meantime, you can:</p>
+            <ul>
+                <li>Check your <a href="/recommendations">personalized workout recommendations</a></li>
+                <li>Log your <a href="/fitness">workouts</a> to track progress</li>
+                <li>Set <a href="/goals">fitness goals</a></li>
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Weekly Overview -->
+    <div class="container">
+        <h2>📅 Weekly Overview</h2>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon progress">
+                    <i class="fas fa-calendar"></i>
+                </div>
+                <h3>Your 7-Day Plan</h3>
+            </div>
+            <div style="padding: 1rem;">
+                <p>This workout plan is designed specifically for your fitness level and goals. Remember to:</p>
+                <ul>
+                    <li>Warm up properly before each workout</li>
+                    <li>Listen to your body and rest when needed</li>
+                    <li>Stay hydrated throughout your workouts</li>
+                    <li>Track your progress in the fitness section</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="container">
+        <h2>🚀 Take Action</h2>
+        <div class="action-buttons">
+            <a href="/fitness" class="btn"><i class="fas fa-plus"></i> Log Workout</a>
+            <a href="/recommendations" class="btn"><i class="fas fa-chart-line"></i> View Recommendations</a>
+            <a href="/ai_coaching" class="btn"><i class="fas fa-robot"></i> AI Coaching</a>
+            <a href="/ai_recipes" class="btn"><i class="fas fa-utensils"></i> AI Recipes</a>
+        </div>
+    </div>
+
+    <!-- AI Status -->
+    <div class="container">
+        <div class="card" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white;">
+            <div style="text-align: center;">
+                <h3><i class="fas fa-robot"></i> Powered by AI</h3>
+                <p>This workout plan is generated using advanced AI algorithms that consider your fitness level, goals, available equipment, and safety requirements.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Update current time
+function updateCurrentTime() {
+    const now = new Date();
+    const timeString = now.toLocaleString();
+    const timeElements = document.querySelectorAll('#current-time');
+    timeElements.forEach(element => {
+        element.textContent = timeString;
+    });
+}
+
+// Update time immediately and then every second
+updateCurrentTime();
+setInterval(updateCurrentTime, 1000);
+
+function refreshAIData() {
+    const button = event.target.closest('button');
+    const originalText = button.innerHTML;
+    
+    // Show loading state
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+    button.disabled = true;
+    
+    // Reload the page after a short delay to show the loading state
+    setTimeout(() => {
+        location.reload();
+    }, 500);
+}
+
+// Check if user came from profile update
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('updated') === 'true') {
+        // Show a success message
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            animation: slideIn 0.5s ease-out;
+        `;
+        notification.innerHTML = `
+            <i class="fas fa-check-circle"></i> 
+            Profile updated! AI workout plan refreshed with your latest fitness data.
+        `;
+        document.body.appendChild(notification);
+        
+        // Remove notification after 5 seconds
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.5s ease-in';
+            setTimeout(() => notification.remove(), 500);
+        }, 5000);
+    }
+});
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %} 

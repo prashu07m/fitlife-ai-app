@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FitLife - Your Personal Fitness Companion{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <a href="/" class="navbar-brand">
+                    <i class="fas fa-dumbbell" style="margin-right: 0.5rem;"></i>FitLife
+                </a>
+                
+                <ul class="navbar-nav">
+                    {% if session.user_id %}
+                        <a href="/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                        <a href="/fitness"><i class="fas fa-running"></i> Fitness</a>
+                        <a href="/diet"><i class="fas fa-apple-alt"></i> Diet</a>
+                        <a href="/goals"><i class="fas fa-bullseye"></i> Goals</a>
+                        <a href="/ai_coaching"><i class="fas fa-robot"></i> AI Coaching</a>
+                        <a href="/ai_recipes"><i class="fas fa-utensils"></i> AI Recipes</a>
+                        <a href="/ai_workout_plan"><i class="fas fa-dumbbell"></i> AI Workouts</a>
+                        <a href="/ai_progress_analysis"><i class="fas fa-chart-bar"></i> AI Analysis</a>
+                        <a href="/profile"><i class="fas fa-user"></i> Profile</a>
+                        <span class="user-info">
+                            <i class="fas fa-user-circle"></i> {{ session.username }}
+                        </span>
+                        <a href="/logout" class="btn btn-danger">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    {% else %}
+                        <a href="/login" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                        <a href="/register" class="btn btn-success">
+                            <i class="fas fa-user-plus"></i> Register
+                        </a>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}" id="flash-{{ loop.index }}">
+                        <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-circle{% elif category == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+                        {{ message }}
+                        <button onclick="this.parentElement.remove()" style="background: none; border: none; color: white; float: right; cursor: pointer;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="fade-in">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer style="text-align: center; padding: 2rem; color: white; margin-top: 4rem;">
+        <div class="container">
+            <p>&copy; 2026 FitLife. Your personal fitness companion powered by AI.</p>
+            <div style="margin-top: 1rem;">
+                <a href="#" style="color: white; margin: 0 0.5rem; text-decoration: none;">
+                    <i class="fab fa-facebook"></i>
+                </a>
+                <a href="#" style="color: white; margin: 0 0.5rem; text-decoration: none;">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" style="color: white; margin: 0 0.5rem; text-decoration: none;">
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Auto-hide flash messages
+        setTimeout(function() {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(function(message) {
+                message.style.opacity = '0';
+                message.style.transform = 'translateX(100%)';
+                setTimeout(function() {
+                    message.remove();
+                }, 500);
+            });
+        }, 5000);
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add loading animation to buttons
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function() {
+                if (!this.classList.contains('btn-secondary')) {
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<span class="loading"></span> Loading...';
+                    this.disabled = true;
+                    
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.disabled = false;
+                    }, 2000);
+                }
+            });
+        });
+
+        // Add hover effects to cards
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Animate stats on scroll
+        const observerOptions = {
+            threshold: 0.5,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.stat-item').forEach(stat => {
+            stat.style.opacity = '0';
+            stat.style.transform = 'translateY(20px)';
+            stat.style.transition = 'all 0.6s ease';
+            observer.observe(stat);
+        });
+    </script>
+</body>
+</html> 
